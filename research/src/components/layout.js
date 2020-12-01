@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { graphql, StaticQuery } from 'gatsby'
+import { graphql, useStaticQuery } from 'gatsby'
 import { MDXProvider } from '@mdx-js/react'
 import Highlight, { defaultProps } from 'prism-react-renderer'
 import vsDark from 'prism-react-renderer/themes/vsDark'
@@ -44,44 +44,41 @@ const Layout = ({ children, pageContext }) => {
       ? ComponentLayout
       : ({ children }) => <>{children}</>
 
-  return (
-    <StaticQuery
-      query={graphql`
-        query SiteTitleQuery {
-          site {
-            siteMetadata {
-              title
-              githubURL
-            }
-          }
+  const data = useStaticQuery(graphql`
+    query SiteTitleQuery {
+      site {
+        siteMetadata {
+          title
+          githubURL
         }
-      `}
-      render={(data) => (
-        <MDXProvider components={components}>
-          <SEO title={frontmatter?.name} />
-          <div style={{ paddingBottom: '10rem' }}>
-            <Header
-              siteTitle={data.site.siteMetadata.title}
-              githubURL={data.site.siteMetadata.githubURL}
-            />
-            <div
-              style={{
-                display: 'flex',
-                padding: '0 1rem',
-                margin: '0 auto',
-                maxWidth: '1200px',
-              }}
-            >
-              <Navigation style={{ marginRight: '2em' }} />
+      }
+    }
+  `)
 
-              <div style={{ flex: '1' }}>
-                <ContentWrapper frontmatter={frontmatter}>{children}</ContentWrapper>
-              </div>
-            </div>
+  return (
+    <MDXProvider components={components}>
+      <SEO title={frontmatter?.name} />
+      <div style={{ paddingBottom: '10rem' }}>
+        <Header
+          siteTitle={data.site.siteMetadata.title}
+          githubURL={data.site.siteMetadata.githubURL}
+        />
+        <div
+          style={{
+            display: 'flex',
+            padding: '0 1rem',
+            margin: '0 auto',
+            maxWidth: '1200px',
+          }}
+        >
+          <Navigation style={{ marginRight: '2em' }} />
+
+          <div style={{ flex: '1' }}>
+            <ContentWrapper frontmatter={frontmatter}>{children}</ContentWrapper>
           </div>
-        </MDXProvider>
-      )}
-    />
+        </div>
+      </div>
+    </MDXProvider>
   )
 }
 
